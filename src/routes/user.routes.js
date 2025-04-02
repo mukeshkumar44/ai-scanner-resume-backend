@@ -1,6 +1,6 @@
 const express = require('express');
 const { getUserProfile, updateUserProfile } = require('../controllers/user.controller');
-const { authVerifyToken } = require('../middleware/auth.middleware');
+const { authVerifyToken } = require('../middleware/authmiddleware');
 const router = express.Router();
 
 // Get user profile
