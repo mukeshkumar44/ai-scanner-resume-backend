@@ -1,8 +1,10 @@
 const express = require('express');
-const {postJob,reviewJob,getJobs}=require('../controllers/job.controller');
+const {postJob,reviewJob,getJobs,getUserJobs,getPendingJobs}=require('../controllers/job.controller');
 const{authverifyToken, isAdmin}=require('../middlewares/authmiddleware');
 const router = express.Router();
 router.post('/post-job',authverifyToken,postJob);
 router.put('/review',authverifyToken,isAdmin ,reviewJob);
 router.get('/all',getJobs);
+router.get("/pending-jobs", authverifyToken, isAdmin, getPendingJobs);
+router.get("/user-jobs", authverifyToken, getUserJobs);
 module.exports=router;

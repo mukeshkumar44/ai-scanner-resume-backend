@@ -64,3 +64,22 @@ exports.getJobs = async (req, res) => {
         res.status(500).json({ message: "bhaiya error aa gya ha Error getting jobs", error });
     }
 };
+exports.getPendingJobs = async (req, res) => {
+    try {
+        const pendingJobs = await Job.find({ status: "pending" }).populate('createdBy', 'name email');
+        res.status(200).json(pendingJobs);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "An error occurred while fetching pending jobs" });
+    }
+}
+
+exports.getUserJobs = async (req, res) => {
+    try {
+        const userJobs = await Job.find({ createdBy: req.user.id });
+        res.status(200).json(userJobs);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "An error occurred while fetching user jobs" });
+    }
+}
