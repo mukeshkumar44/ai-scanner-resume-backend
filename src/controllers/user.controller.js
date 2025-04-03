@@ -3,6 +3,10 @@ const User = require('../models/user.model');
 // Get user profile
 exports.getUserProfile = async (req, res) => {
     try {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Unauthorized request' });
+        }
+
         const userId = req.user.id;
         console.log('Fetching profile for user ID:', userId);
         
@@ -12,7 +16,6 @@ exports.getUserProfile = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
         
-        // Add isAdmin property based on role
         const userResponse = user.toObject();
         userResponse.isAdmin = user.role === 'admin';
         
@@ -27,31 +30,31 @@ exports.getUserProfile = async (req, res) => {
 // Update user profile
 exports.updateUserProfile = async (req, res) => {
     try {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Unauthorized request' });
+        }
+
         const userId = req.user.id;
         const { name, email } = req.body;
         
-        // Validate input
         if (!name && !email) {
             return res.status(400).json({ message: 'Please provide fields to update' });
         }
         
-        // Build update object
         const updateData = {};
         if (name) updateData.name = name;
         if (email) updateData.email = email;
         
-        // Update user
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             { $set: updateData },
-            { new: true }
+            { new: true, runValidators: true }
         ).select('-password');
         
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
         
-        // Add isAdmin property based on role
         const userResponse = updatedUser.toObject();
         userResponse.isAdmin = updatedUser.role === 'admin';
         
